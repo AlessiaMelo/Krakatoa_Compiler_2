@@ -1,3 +1,4 @@
+//Laboratório de Compiladores - fase 2 
 //Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
@@ -5,7 +6,7 @@ package ast;
 
 //add extends
 public class IfStatement extends Statement {
-	// IfStat ::= "if" "(" Expression")" Statement ["else" Statement ]
+	//IfStat ::= "if" "(" Expression")" Statement ["else" Statement ]
 
 	private Expr expr;
 	private Statement ifPart, elsePart;
@@ -16,16 +17,17 @@ public class IfStatement extends Statement {
 		this.elsePart = elses;
 	}
 
-	public void genKra(PW pw) {
+	public void genKra(PW pw){
 		pw.printIdent("if( ");
 		this.expr.genKra(pw, false);
-		pw.print(") ");
+		pw.println(") ");
 		this.ifPart.genKra(pw);
 
-		if (this.elsePart != null) {
+		if(this.elsePart != null){
+			pw.add();
 			pw.printIdent("else ");
 			this.elsePart.genKra(pw);
-			/// pw.sub();
+			pw.sub();
 		}
 	}
 

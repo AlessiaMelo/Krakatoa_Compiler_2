@@ -1,10 +1,11 @@
-//Alessia Melo 		RA: 620289
+//Laboratório de Compiladores - fase 2 
+//Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 package ast;
 
 import java.util.*;
 
-public class ExprList extends Expr{
+public class ExprList {
 	
 	
 	private ArrayList<Expr> exprList;
@@ -27,15 +28,14 @@ public class ExprList extends Expr{
 		return exprList.iterator();
 	}
 	
-    public void genCpp( PW pw ) {
-        int size = exprList.size();
-        for ( Expr e : exprList ) {
-        	e.genCpp(pw, false);
-            if ( --size > 0 )
-                pw.print(", ");
-        }
-    }
-    
+	 public void genCpp( PW pw ) {
+	        int size = exprList.size();
+	        for ( Expr e : exprList ) {
+	        	e.genCpp(pw, false);
+	            if ( --size > 0 )
+	                pw.print(", ");
+	        }
+	    }
     
     public void genKra(PW pw){
         int size = exprList.size();
@@ -46,26 +46,7 @@ public class ExprList extends Expr{
                 pw.print(", ");
         }
     }
-	
-    ///Is it nedded?
-    
-	@Override
-	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void genKra(PW pw, boolean putParenthesis) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void genCpp(PW pw, boolean putParenthesis) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
+   
 
 }

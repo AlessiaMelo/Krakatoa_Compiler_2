@@ -1,4 +1,5 @@
-//Alï¿½ssia Melo 		RA: 620289
+//Laboratório de Compiladores - fase 1 
+//Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
 //what??
@@ -16,7 +17,7 @@ public class NullStatement extends Statement{
 
 	@Override
 	public void genKra(PW pw) {
-		//pw.printlnIdent(";");
+		pw.printlnIdent(";");
 		
 	}
 }

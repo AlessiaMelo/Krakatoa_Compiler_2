@@ -1,5 +1,5 @@
-
-//Alessia Melo 		RA: 620289
+//Laboratório de Compiladores - fase 2 
+//Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
 
@@ -93,6 +93,7 @@ public class KraClass extends Type {
 		}
 		return null;
 	}
+
 
 	public void genKra(PW pw) {
 		
@@ -217,3 +218,5 @@ int main () {
 }
 
 */
+
+}

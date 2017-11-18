@@ -1,7 +1,12 @@
-//Alessia Melo 		RA: 620289
+//Laboratório de Compiladores - fase 2 
+//Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
+
+
 package ast;
+
+
 
 //add extends
 public class CompositeStatement extends Statement {
@@ -15,7 +20,6 @@ public class CompositeStatement extends Statement {
 	}
 
 	public void genKra(PW pw) {
-		pw.println();
 		pw.printlnIdent("{");
 		pw.add();
 		stmtList.genKra(pw);
@@ -32,5 +36,6 @@ public class CompositeStatement extends Statement {
 		pw.sub();
 		pw.printlnIdent("}");
 	}
+
 
 }

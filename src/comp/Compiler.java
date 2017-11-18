@@ -1,7 +1,11 @@
+//Laboratório de Compiladores - fase 1 
+//Aléssia Melo 		RA: 620289
+//Leonardo Tozato 	RA: 620483
 
 package comp;
 
 import ast.*;
+import jdk.nashorn.internal.runtime.Undefined;
 import lexer.*;
 import java.io.*;
 import java.util.*;
@@ -50,7 +54,6 @@ public class Compiler {
 			
 			boolean hasProgram = false;
 			for (KraClass k : kraClassList) {
-				
 				if(k.getName().equals("Program")){
 					hasProgram = true;
 					break;
@@ -59,9 +62,12 @@ public class Compiler {
 			if(!hasProgram)
 				signalError.showError("Source code without a class 'Program'");;
 		}
-		catch( RuntimeException e) {
-			
-		}
+        catch( CompilerError e) {
+            // if there was an exception, there is a compilation signalError
+        }
+        catch ( RuntimeException e ) {
+            e.printStackTrace();
+        }
 		return new Program(kraClassList, metaobjectCallList, compilationErrorList);
 	}
 
@@ -172,10 +178,8 @@ public class Compiler {
 			String name = lexer.getStringValue();
 			lexer.nextToken();
 			
-			if ( lexer.token == Symbol.LEFTPAR ) {
-				
+			if ( lexer.token == Symbol.LEFTPAR )
 				methodDec(t, name, qualifier);
-			}
 			else if ( qualifier != Symbol.PRIVATE )
 				signalError.showError("Attempt to declare a public instance variable");
 			else if (t == Type.voidType)
@@ -198,7 +202,7 @@ public class Compiler {
 	private void instanceVarDec(Type type, String name) {
 		if(currentClass.getVar(name) != null)
 			signalError.showError("Variable " + name + "is already declared in this class.");
-		if(currentClass.searchPrivateMethod(name) != null || currentClass.searchPublicMethod(name) != null)
+		if(currentClass.searchMethod(name) != null)
 			signalError.showError(name + " is already declared as a method.");
 		
 		InstanceVariable v = new InstanceVariable(name, type);
@@ -228,7 +232,7 @@ public class Compiler {
 		if(currentClass.searchMethod(name) != null)
 			signalError.showError("Method " + name + " is already defined in this class");
 		if(currentClass.getVar(name) != null)
-			signalError.showError("Identifier " + name + "is declared as a Variable in this scope");
+			signalError.showError("Identifier " + name + " is declared as a variable in this class");
 		currentMethod = new Method(type, name, qualifier);
 		currentClass.addMethod(currentMethod, qualifier);
 		
@@ -241,7 +245,7 @@ public class Compiler {
 	
 		if(currentClass.getName().equals("Program") && name.equals("run")){
 			if(currentMethod.getParamList().getSize() > 0)
-				signalError.showError("The run method must be parameterless");
+				signalError.showError("The run method must must have no parameters");
 			if(type != Type.voidType)
 				signalError.showError("The run method must have void return type");
 			if(qualifier != Symbol.PUBLIC)
@@ -260,19 +264,19 @@ public class Compiler {
 		}
 		if(superMethod != null){
 			if(superMethod.getReturnType() != type)
-				signalError.showError("Invalid override: missmatch return type");
+				signalError.showError("Method " + name + "of subclass + " + currentClass.getName() + " has a signature different from method inherit from supercass " + superClass.getName());
 			
 			ParamList superParamList = superMethod.getParamList(); 
 			ParamList methParamList = currentMethod.getParamList();
 			
 			if(superParamList.getSize() != methParamList.getSize())
-				signalError.showError("Invalid override: missmatch number of parameters");
+				signalError.showError("Method " + name + "of subclass + " + currentClass.getName() + " has a signature different from method inherit from supercass " + superClass.getName());
 			
 			Iterator<Parameter> superIt = superParamList.elements();
 			Iterator<Parameter> paramIt = methParamList.elements();
 			while(superIt.hasNext()){
 				if(!(superIt.next().getType().isCompatible(paramIt.next().getType())))
-					signalError.showError("Invalid override: missmatch type of parameters");
+					signalError.showError("Method " + name + "of subclass + " + currentClass.getName() + " has a signature different from method inherit from supercass " + superClass.getName());
 			}
 		}
 		
@@ -302,7 +306,7 @@ public class Compiler {
 		Variable v = new Variable(name, type);
 		
 		if(symbolTable.getInLocal(name) != null)
-			signalError.showError("double declaration of local variable " + name);
+			signalError.showError("Identifier " + name + " is already in use in this scope.");
 		symbolTable.putInLocal(name, v);
 		currentMethod.addVar(v);
 		lexer.nextToken();
@@ -316,7 +320,8 @@ public class Compiler {
 			v = new Variable(name, type);
 			
 			if(symbolTable.getInLocal(name) != null)
-				signalError.showError("double declaration of local variable " + name);
+				signalError.showError("Identifier " + name + " is already in use in this scope.");
+			
 			symbolTable.putInLocal(name, v);
 			currentMethod.addVar(v);
 			lexer.nextToken();
@@ -480,7 +485,7 @@ public class Compiler {
 				Expr right = expr();
 				
 				if(!left.getType().isCompatible(right.getType()))
-					this.signalError.showError("Type error in assignment");
+					this.signalError.showError("Type error in assignment, left side is a + " + left.getType().getName() + " type expression, but right side is a " + right.getType().getName() + " type expression");
 				
 				if ( lexer.token != Symbol.SEMICOLON )
 					signalError.showError("';' expected", true);
@@ -491,6 +496,11 @@ public class Compiler {
 			}
 			if(left instanceof MessageSendToVariable && left.getType() != Type.voidType)
 				signalError.showError("Illegal call of non void method, this  be in right side of an assignment");
+			
+			if ( lexer.token != Symbol.SEMICOLON )
+				signalError.showError("';' expected", true);
+			else
+				lexer.nextToken();
 			
 			return new AssignStatement(left, null);
 				
@@ -596,19 +606,19 @@ public class Compiler {
 		Expr e = expr();
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
-		lexer.nextToken();
+		
 		
 		if(this.currentMethod.getReturnType() == Type.voidType) 
 			this.signalError.showError("Return value in a void method");
 		if(!this.currentMethod.getReturnType().isCompatible(e.getType()))
 			this.signalError.showError("Incompatible return value");
-		
+		lexer.nextToken();
 		hasReturn = true;
 		return new ReturnStatement(e);
 	}
 
 	private ReadStatement readStatement() {
-		ArrayList<Variable> readStmt = new ArrayList<>();
+		ReadStatement read = new ReadStatement();
 		boolean message = false;
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTPAR ) 
@@ -644,7 +654,8 @@ public class Compiler {
 			if(v.getType() != Type.stringType && v.getType() != Type.intType)
 				signalError.showError("Only string and int types can be read.");
 			
-			readStmt.add(v);
+			read.addVar(v);
+			read.addMessage(message);
 			
 			if ( lexer.token == Symbol.COMMA )
 				lexer.nextToken();
@@ -658,7 +669,7 @@ public class Compiler {
 			signalError.show(ErrorSignaller.semicolon_expected);
 		lexer.nextToken();
 		
-		return new ReadStatement(readStmt);
+		return read;
 	}
 
 	private WriteStatement writeStatement() {
@@ -753,7 +764,7 @@ public class Compiler {
 			Expr right = simpleExpr();
 			
 			if ( op == Symbol.EQ || op == Symbol.NEQ){
-				if(!left.getType().isCompatible(right.getType()))
+				if(!left.getType().isCompatible(right.getType()) && !right.getType().isCompatible(left.getType()))
 					signalError.showError("Incompatible types in comparison");
 			}
 			else{

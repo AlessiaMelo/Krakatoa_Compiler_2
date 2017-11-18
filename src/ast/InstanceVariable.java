@@ -1,14 +1,13 @@
-//Alessia Melo 		RA: 620289
+//Laboratório de Compiladores - fase 2 
+//Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
 package ast;
 
-//atributes of a class
 public class InstanceVariable extends Variable {
 		public InstanceVariable( String name, Type type ) {
 		super(name, type);
 	}
-
 	public void genKra(PW pw) {
 		pw.printIdent("");
 		pw.print("private ");
@@ -27,6 +26,7 @@ public class InstanceVariable extends Variable {
 		pw.print(this.getName());
 		pw.println(";");
 	}
+
 
 
 }

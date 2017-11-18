@@ -1,4 +1,5 @@
-//Alessia Melo 		RA: 620289
+//Laboratório de Compiladores - fase 1 
+//Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
 

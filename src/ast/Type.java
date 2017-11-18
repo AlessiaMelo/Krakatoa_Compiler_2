@@ -1,3 +1,4 @@
+//Laboratório de Compiladores - fase 2 
 //Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
@@ -24,15 +25,18 @@ abstract public class Type {
     private String name;
 
 	public boolean isCompatible(Type targetType) {
-		if(targetType == undefinedType || this == undefinedType)
+		if(this == stringType && targetType == undefinedType){
 			return true;
-		if (this == voidType || targetType == voidType)
+		}else if (this == voidType || targetType == voidType)
 		{
 			return false;
 		}
-		else if(this == booleanType || this == intType || this == stringType)
+		else if(this == booleanType || this == intType || this == stringType || targetType == booleanType || targetType == intType || targetType == stringType)
 		{
 			return this == targetType;
+		}
+		else if(targetType == undefinedType || this == undefinedType){
+			return true;
 		}
 		else
 		{

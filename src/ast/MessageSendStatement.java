@@ -1,3 +1,4 @@
+//Laboratório de Compiladores - fase 1 
 //Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
 
@@ -8,9 +9,9 @@ public class MessageSendStatement extends Statement {
 	
 	private MessageSend  messageSend;
 	
-	public void genCpp( PW pw ) {
+	public void genC( PW pw ) {
 		pw.printIdent("");
-		messageSend.genCpp(pw, false);
+		// messageSend.genC(pw);
 		pw.println(";");
 	}
 
@@ -19,6 +20,7 @@ public class MessageSendStatement extends Statement {
 		this.messageSend.genKra(pw, false);
 		pw.println(";");
 	}
+
 
 
 }

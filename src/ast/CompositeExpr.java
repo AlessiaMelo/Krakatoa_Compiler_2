@@ -1,5 +1,8 @@
+//Laboratório de Compiladores - fase 2 
 //Aléssia Melo 		RA: 620289
 //Leonardo Tozato 	RA: 620483
+
+
 
 package ast;
 
@@ -18,17 +21,17 @@ public class CompositeExpr extends Expr {
 	}
 
 	@Override
-	public void genCpp( PW pw, boolean putParenthesis ) {
+	public void genC( PW pw, boolean putParenthesis ) {
 		if ( putParenthesis )
 			pw.print("(");
-		left.genCpp(pw, true);
+		left.genC(pw, true);
 		String strSymbol = arrayOper.get(oper);
 		if ( strSymbol == null ) {
-			pw.println("internal error in CompositeExpr::genCpp");
+			pw.println("internal error in CompositeExpr::genC");
 		}
 		else
 			pw.print(" " + strSymbol + " ");
-		right.genCpp(pw, true);
+		right.genC(pw, true);
 		if ( putParenthesis )
 			pw.print(")");
 	}
@@ -70,6 +73,22 @@ public class CompositeExpr extends Expr {
 			return Type.booleanType;
 		else
 			return Type.intType;
+	}
+	
+	@Override
+	public void genCpp( PW pw, boolean putParenthesis ) {
+		if ( putParenthesis )
+			pw.print("(");
+		left.genCpp(pw, true);
+		String strSymbol = arrayOper.get(oper);
+		if ( strSymbol == null ) {
+			pw.println("internal error in CompositeExpr::genCpp");
+		}
+		else
+			pw.print(" " + strSymbol + " ");
+		right.genCpp(pw, true);
+		if ( putParenthesis )
+			pw.print(")");
 	}
 
 	private Expr left, right;

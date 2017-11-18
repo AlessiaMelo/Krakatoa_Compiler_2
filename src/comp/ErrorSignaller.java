@@ -1,3 +1,7 @@
+//Laboratório de Compiladores - fase 1 
+//Aléssia Melo 		RA: 620289
+//Leonardo Tozato 	RA: 620483
+
 package comp;
 import java.io.*;
 import java.util.ArrayList;
@@ -52,7 +56,7 @@ public class ErrorSignaller {
       foundCompilerError = true;
       CompilationError newError = new CompilationError(strMessage, lineNumber, lineWithError);
       compilationErrorList.add(newError);
-      throw new RuntimeException();
+      throw new CompilerError();
    }
 
 
